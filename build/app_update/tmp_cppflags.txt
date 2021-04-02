@@ -1,0 +1,1 @@
+149969c-dirty bt_spp_serial_bridge v4.3-dev-2586-g526f68239

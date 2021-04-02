@@ -325,13 +325,18 @@ void app_main()
         ESP_LOGE(SPP_TAG, "%s spp register failed", __func__);
         return;
     }
-    esp_spp_vfs_register();
+    
     spp_task_task_start_up();
-
+    
     if (esp_spp_init(esp_spp_mode) != ESP_OK) {
         ESP_LOGE(SPP_TAG, "%s spp init failed", __func__);
         return;
     }
+    
+    esp_spp_vfs_register();
+    
+
+  
 
     /* Set default parameters for Secure Simple Pairing */
     esp_bt_sp_param_t param_type = ESP_BT_SP_IOCAP_MODE;
