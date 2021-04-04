@@ -24,6 +24,7 @@
 #include "freertos/task.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include "hal/uart_types.h"
 #include "esp_log.h"
 #include "esp_bt.h"
 #include "esp_bt_main.h"
@@ -282,10 +283,12 @@ void app_main()
         .rx_flow_ctrl_thresh = UART_FIFO_LEN - 4
     };
 
-    ESP_ERROR_CHECK(uart_param_config(UART_NUM_1, &uart_config));
-    ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, BT_UART_TX_GPIO, BT_UART_RX_GPIO, BT_UART_RTS_GPIO, BT_UART_CTS_GPIO));
     ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, BT_UART_RX_BUF_SZ, BT_UART_TX_BUF_SZ, 0, NULL, 0));
-
+    ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, BT_UART_TX_GPIO, BT_UART_RX_GPIO, BT_UART_RTS_GPIO, BT_UART_CTS_GPIO));
+    ESP_ERROR_CHECK(uart_param_config(UART_NUM_1, &uart_config));
+//     ESP_ERROR_CHECK(uart_set_line_inverse(UART_NUM_1, UART_SIGNAL_CTS_INV));
+    
+    
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -320,20 +323,22 @@ void app_main()
         ESP_LOGE(SPP_TAG, "%s gap register failed: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
-
+    
+    spp_task_initQueue();
+    
     if (esp_spp_register_callback(esp_spp_stack_cb) != ESP_OK) {
         ESP_LOGE(SPP_TAG, "%s spp register failed", __func__);
         return;
     }
-    
-    spp_task_task_start_up();
     
     if (esp_spp_init(esp_spp_mode) != ESP_OK) {
         ESP_LOGE(SPP_TAG, "%s spp init failed", __func__);
         return;
     }
     
+    
     esp_spp_vfs_register();
+    spp_task_task_start_up();
     
 
   

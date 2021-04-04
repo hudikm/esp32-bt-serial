@@ -50,6 +50,8 @@ void spp_task_task_start_up(void);
 
 void spp_task_task_shut_down(void);
 
+void spp_task_initQueue(void);
+
 
 /**
  * @brief     handler for write and read
