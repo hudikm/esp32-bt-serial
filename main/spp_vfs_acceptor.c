@@ -73,7 +73,7 @@ static const esp_spp_mode_t esp_spp_mode = ESP_SPP_MODE_VFS;
 static const esp_spp_sec_t sec_mask = ESP_SPP_SEC_AUTHENTICATE;
 static const esp_spp_role_t role_slave = ESP_SPP_ROLE_SLAVE;
 
-#define SPP_BUFF_SZ 128
+#define SPP_BUFF_SZ 2048 //128
 static uint8_t spp_buff[SPP_BUFF_SZ];
 
 static int uart_to_bt(int bt_fd, TickType_t ticks_to_wait)
@@ -92,7 +92,7 @@ static int uart_to_bt(int bt_fd, TickType_t ticks_to_wait)
             return -1;
         }
         if (res == 0) {
-            vTaskDelay(1);
+            //vTaskDelay(1); //Zapoznamkoval som to neviem preco tu je delay
             continue;
         }
         ESP_LOGI(SPP_TAG, "BT <- %d bytes", res);
@@ -102,7 +102,7 @@ static int uart_to_bt(int bt_fd, TickType_t ticks_to_wait)
     return size;
 }
 
-#define SPP_BULK_RD_THRESHOLD 512
+#define SPP_BULK_RD_THRESHOLD 2048 //512
 
 static void spp_read_handle(void * param)
 {
@@ -340,7 +340,9 @@ void app_main()
     esp_spp_vfs_register();
     spp_task_task_start_up();
     
-
+    uint32_t bd;
+    uart_get_baudrate(UART_NUM_1,&bd);
+    printf("baud: %d \n", bd);
   
 
     /* Set default parameters for Secure Simple Pairing */
