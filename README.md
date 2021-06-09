@@ -1,3 +1,12 @@
+# Prikazy
+Init venv prostredie:
+. $HOME/esp/esp-idf/export.sh
+
+idf.py -p /dev/ttyUSB0 flash
+
+idf.py -p /dev/ttyUSB0 monitor
+
+
 # esp32-bt-serial
 ESP32 classic bluetooth to serial port bridge
 
